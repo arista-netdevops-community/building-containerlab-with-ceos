@@ -9,7 +9,7 @@
             "_CLAB_VERSION": "0.44.2",
             "_YQ_VERSION": "v4.34.1",
             "_YQ_BINARY": "yq_linux_amd64",
-            "_AR_FILE_PATH": "/support/download/EOS-USA/Active Releases/4.29/EOS-4.29.3M/cEOS-lab/cEOS-lab-4.29.3M.tar.xz",
+            "_AR_FILE_PATH": "/support/download/EOS-USA/Active Releases/4.30/EOS-4.30.2F/cEOS-lab/cEOS-lab-4.30.2F.tar.xz",
             "_ARTOKEN": "${localEnv:ARTOKEN}"
         }
     },
