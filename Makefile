@@ -6,4 +6,4 @@ help: ## Display help message
 
 .PHONY: carbon
 carbon: ## create images from carbon snippets
-	carbon-now $(CURRENT_DIR)/carbon-snippets/* --save-to $(CURRENT_DIR)/img/ --config $(CURRENT_DIR)/carbon-now-preset.json -p deep-space
+	./carbon-convert.sh
