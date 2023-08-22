@@ -66,4 +66,4 @@ This repository is based on many awesome open source repositories and some free/
 - [Github Codespaces](https://github.com/features/codespaces)
 - And many more...
 
-All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/). Excellent free stock photos resources. It's not possible to reference every author individually, but their work is highly appreciated.
+All photos (if any) are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/). Excellent free stock photos resources. It's not possible to reference every author individually, but their work is highly appreciated.
