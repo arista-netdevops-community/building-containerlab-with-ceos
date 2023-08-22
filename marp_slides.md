@@ -86,3 +86,15 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 - Possible caveats
 
 > This workshop is a step-by-step guide explaining how to build a lab environment with [Containerlab](https://containerlab.srlinux.dev/) and Arista cEOS-lab. It is  focusing on essential and cEOS-lab specific features. Please check [Containerlab documentation](https://containerlab.srlinux.dev/) for details.
+
+---
+
+# Prerequisites
+
+- This workshop requires:
+  - Ubuntu LTS 22.04 or later
+  - 8 GB RAM and 4 vCPUs
+- Only x86 architecture is supported. It is technically possible to [run Container lab on ARM](https://containerlab.dev/install/#containerlab-on-arm-based-macs), but there are no network images available for ARM as of Aug 2023.
+- You can use [Github Codespaces](https://github.com/features/codespaces) or [VSCode devcontainer](https://code.visualstudio.com/docs/devcontainers/containers) for this workshop. The detailed procedure is described in the appendix.
+- The appendix also provides instructions for creating a KVM VM with Ubuntu Cloud Image.
+- There is also Vagrant file available in this repository. Use it at your own risk.
