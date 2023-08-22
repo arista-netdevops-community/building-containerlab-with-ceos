@@ -42,7 +42,7 @@
     "backgroundImage": "null",
     "backgroundImageSelection": null,
     "backgroundMode": "color",
-    "backgroundColor": "linear-gradient(to bottom, #000000, #434343)",
+    "backgroundColor": "linear-gradient(to bottom, #100000, #434343)",
     "dropShadow": true,
     "dropShadowOffsetY": "20px",
     "dropShadowBlurRadius": "68px",
