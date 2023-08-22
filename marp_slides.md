@@ -52,6 +52,11 @@ Petr Ankudinov, 2023
 
 <style scoped>section {font-size: 22px;}</style>
 
+<!-- Add footer starting from this slide -->
+<!--
+footer: 'cEOS/cLab Workshop 2023'
+-->
+
 > Credits to [Roman Dodin](https://netdevops.me/) and [other cLab contributors](https://github.com/srl-labs/containerlab/graphs/contributors) for making the world a better place!
 
 This repository is based on many awesome open source repositories and some free/commercial Github features:
@@ -113,7 +118,12 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 3. Logout and login again to apply the changes.
 4. Check the Docker version and run `hello-world` container to test functionality.
 
-[![bg right w:640](img/carbon-setup-docker.sh.png)](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/carbon-snippets/carbon-setup-docker.sh)
+![bg right w:640](img/carbon-setup-docker.sh.png)
+
+<!-- Add footer starting from this slide -->
+<!--
+footer: 'cEOS/cLab Workshop 2023. [Copy-paste Code Snippet here](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/carbon-snippets/carbon-setup-docker.sh)'
+-->
 
 <!--
 # install Docker
