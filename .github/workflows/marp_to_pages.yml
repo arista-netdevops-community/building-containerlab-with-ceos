@@ -1,0 +1,38 @@
+name: marp-to-pages
+concurrency: marp-to-pages
+on:
+  push:
+    branches: [ main ]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code ✅
+        uses: actions/checkout@v2
+
+      - name: Copy images 🖼️
+        run: mkdir build && cp -R img build/img && cp -R excalidraw build/excalidraw
+
+      - name: Build HTML from marp_slides.md 🔨
+        uses: docker://marpteam/marp-cli:v3.0.2
+        with:
+          args:  --html marp_slides.md -o build/index.html
+        env:
+          MARP_USER: root:root
+
+      - name: Build PDF from marp_slides.md 🔨
+        uses: docker://marpteam/marp-cli:v3.0.2
+        with:
+          args:  --html --allow-local-files marp_slides.md -o build/avd_extended_workshop.pdf
+        env:
+          MARP_USER: root:root
+
+      - name: Deploy production 🚀
+        if: ${{ github.event_name == 'push' }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: ./build/
