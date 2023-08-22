@@ -37,8 +37,8 @@
     }
   },
   "deep-space": {
-    "paddingVertical": "56px",
-    "paddingHorizontal": "56px",
+    "paddingVertical": "28px",
+    "paddingHorizontal": "28px",
     "backgroundImage": "null",
     "backgroundImageSelection": null,
     "backgroundMode": "color",
@@ -50,7 +50,7 @@
     "windowTheme": "none",
     "language": "application/x-sh",
     "fontFamily": "Hack",
-    "fontSize": "12.5px",
+    "fontSize": "8px",
     "lineHeight": "133%",
     "windowControls": true,
     "widthAdjustment": false,
@@ -61,7 +61,7 @@
     "squaredImage": false,
     "hiddenCharacters": false,
     "name": "",
-    "width": "640",
+    "width": "320",
     "highlights": null
   }
 }  
