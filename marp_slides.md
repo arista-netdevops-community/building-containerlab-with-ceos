@@ -45,3 +45,25 @@ Petr Ankudinov, 2023
 ```
 
 ![bg right](https://github.com/srl-labs/containerlab/raw/main/docs/images/containerlab_export_white_ink.svg?sanitize=true)
+
+---
+
+# Credits and References
+
+<style scoped>section {font-size: 22px;}</style>
+
+> Credits to [Roman Dodin](https://netdevops.me/) and [other cLab contributors](https://github.com/srl-labs/containerlab/graphs/contributors) for making the world a better place!
+
+This repository is based on many awesome open source repositories and some free/commercial Github features:
+
+- [Containerlab](https://containerlab.srlinux.dev/)
+- [VS Code](https://code.visualstudio.com/)
+- [DevContainers](https://code.visualstudio.com/docs/remote/containers)
+- [Marp](https://marp.app/)
+- [Excalidraw VS Code Plugin](https://github.com/excalidraw/excalidraw-vscode)
+- [Github Actions](https://github.com/features/actions)
+- [Github Pages](https://pages.github.com/)
+- [Github Codespaces](https://github.com/features/codespaces)
+- And many more...
+
+All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/). Excellent free stock photos resources. It's not possible to reference every author individually, but their work is highly appreciated.
