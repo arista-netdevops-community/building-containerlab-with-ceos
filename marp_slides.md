@@ -113,4 +113,4 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 3. Logout and login again to apply the changes.
 4. Check the Docker version and run `hello-world` container to test functionality.
 
-![bg right fit](img/setup-docker.png)
+![bg right fit](img/carbon-setup-docker.sh.png)
