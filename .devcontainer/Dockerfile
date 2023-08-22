@@ -16,9 +16,13 @@ RUN apt-get update \
     curl \
     iputils-ping \
     htop \
+    npm \
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean
+
+# install carbon-now-cli
+RUN npm i -g carbon-now-cli
 
 # install yq
 RUN wget https://github.com/mikefarah/yq/releases/download/${_YQ_VERSION}/${_YQ_BINARY} -O /usr/bin/yq \
