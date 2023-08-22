@@ -113,7 +113,7 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 3. Logout and login again to apply the changes.
 4. Check the Docker version and run `hello-world` container to test functionality.
 
-![bg right w:640](img/carbon-setup-docker.sh.png)
+[![bg right w:640](img/carbon-setup-docker.sh.png)](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/carbon-snippets/carbon-setup-docker.sh)
 
 <!--
 # install Docker
