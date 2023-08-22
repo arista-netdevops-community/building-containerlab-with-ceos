@@ -144,7 +144,7 @@ docker run hello-world
 </div>
 <div>
 
-```bash     _                   _       _     
+```bash
 # install Docker
 sudo curl -fsSL https://get.docker.com | sh
 # add user to the docker group
