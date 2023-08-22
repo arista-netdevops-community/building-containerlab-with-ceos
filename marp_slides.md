@@ -64,6 +64,7 @@ This repository is based on many awesome open source repositories and some free/
 - [Github Actions](https://github.com/features/actions)
 - [Github Pages](https://pages.github.com/)
 - [Github Codespaces](https://github.com/features/codespaces)
+- [Carbon](https://carbon.now.sh/)
 - And many more...
 
 All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/). Excellent free stock photos resources. It's not possible to reference every author individually, but their work is highly appreciated.
@@ -98,3 +99,18 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 - You can use [Github Codespaces](https://github.com/features/codespaces) or [VSCode devcontainer](https://code.visualstudio.com/docs/devcontainers/containers) for this workshop. The detailed procedure is described in the appendix.
 - The appendix also provides instructions for creating a KVM VM with Ubuntu Cloud Image.
 - There is also Vagrant file available in this repository. Use it at your own risk.
+
+---
+
+# Setup Docker on the Host
+
+<style scoped>section {font-size: 22px;}</style>
+
+> Check if Docker is already installed. In this case you can skip the steps below.
+
+1. Install Docker on the host. The detailed instructions are available [here](https://docs.docker.com/engine/install/ubuntu/). You can used one-liner script for that.
+2. Add your user to the `docker` group.
+3. Logout and login again to apply the changes.
+4. Check the Docker version and run `hello-world` container to test functionality.
+
+![bg right fit](img/setup-docker.png)
