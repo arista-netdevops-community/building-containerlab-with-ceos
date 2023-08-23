@@ -139,6 +139,45 @@ docker run hello-world
 
 ---
 
+# Setup Git (Optional)
+
+<style scoped>section {font-size: 20px;}</style>
+
+- Git must be pre-installed. Otherwise you are in a wrong place. Escape! 👾 🚀
+- Setup your name and email address:
+
+  ```bash
+  git config --global user.name "<first-and-2nd-name>"
+  git config --global user.email "<your-email>"
+  ```
+
+- Check the current configuration:
+
+  ```bash
+  git config --list
+  ```
+
+---
+
+# Clone this Repository
+
+```console
+$ cd ${HOME}
+$ git clone https://github.com/arista-netdevops-community/building-containerlab-with-ceos.git
+Cloning into 'building-containerlab-with-ceos'...
+remote: Enumerating objects: 198, done.
+remote: Counting objects: 100% (198/198), done.
+remote: Compressing objects: 100% (120/120), done.
+remote: Total 198 (delta 109), reused 152 (delta 66), pack-reused 0
+Receiving objects: 100% (198/198), 1.31 MiB | 6.59 MiB/s, done.
+Resolving deltas: 100% (109/109), done.
+$ ls | grep ceos
+building-containerlab-with-ceos
+$ cd building-containerlab-with-ceos
+```
+
+---
+
 # Download cEOS-lab Image
 
 <style scoped>section {font-size: 20px;}</style>
@@ -175,10 +214,24 @@ docker run hello-world
 
 2. Confirm that the image was imported successfully:
 
-    ```bash
-    clab@ubuntu:~$ docker image ls
-    REPOSITORY    TAG         IMAGE ID       CREATED         SIZE
-    ceos-lab      4.30.2F     646c604b2596   9 hours ago     1.9GB
-    ceos-lab      latest      646c604b2596   9 hours ago     1.9GB
-    hello-world   latest      feb5d9fea6a5   10 months ago   13.3kB
+    ```console
+    $ docker image ls
+    REPOSITORY    TAG       IMAGE ID       CREATED          SIZE
+    ceos-lab      4.30.2F   21b540a4a343   45 minutes ago   1.95GB
+    ceos-lab      latest    21b540a4a343   45 minutes ago   1.95GB
+    hello-world   latest    b038788ddb22   3 months ago     9.14kB
     ```
+
+---
+
+# Install Containerlab
+
+<style scoped>section {font-size: 22px;}</style>
+
+- It's just a one-liner:
+  
+  ```bash
+  bash -c "$(curl -sL https://get.containerlab.dev)"
+  ```
+
+- Refer to the [Containerlab quick start documentation](https://containerlab.dev/quickstart/) for the details.
