@@ -300,3 +300,28 @@ a7f7c80aa90f   ceos-lab:latest   "bash -c '/mnt/flash…"   5 minutes ago   Up 5
 421665f3e67f   ceos-lab:latest   "bash -c '/mnt/flash…"   5 minutes ago   Up 5 minutes             clab-ceos-lab-a_host
 142ab91f0ceb   ceos-lab:latest   "bash -c '/mnt/flash…"   5 minutes ago   Up 5 minutes             clab-ceos-lab-leaf2
 ```
+
+---
+
+# Access cEOS-lab CLI
+
+<style scoped>section {font-size: 20px;}</style>
+
+There are few options to access cEOS-lab CLI:
+
+- SSH to the container. For ex.:
+  
+  ```bash
+  # the default login is `admin` and password is `admin`
+  ssh admin@clab-ceos-lab-leaf1
+  ```
+
+- Connect to the "console" using Docker command. For ex.: `docker exec -it clab-ceos-lab-leaf1 Cli`
+
+  > NOTE: `docker exec -it clab-ceos-lab-leaf1 bash` allows to connect directly to the switch shell.
+
+Execute few command to confirm that cEOS-lab is functioning:
+
+- `show version`
+- `show lldp neighbors`
+- `show running-config`
