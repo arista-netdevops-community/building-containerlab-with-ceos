@@ -355,24 +355,30 @@ Execute few command to confirm that cEOS-lab is functioning:
 
 <style scoped>section {font-size: 22px;}</style>
 
-Deploy the lab with the custom configuration:
+- Deploy the lab with the custom configuration:
 
-```bash
-sudo containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
-```
+  ```bash
+  sudo containerlab deploy -t custom_cfg.clab.yml --reconfigure
+  ```
 
-> NOTE: `--reconfigure` is required if `--cleanup` flag was not specified in the previous step. Otherwise custom startup configs will be ignored and configs in `clab-ambassadors_clab/` will be used instead.
+  > NOTE: `--reconfigure` is required if `--cleanup` flag was not specified in the previous step. Otherwise custom configs will be ignored and startup configs in `clab-ambassadors_clab/` will be used instead.
 
-Custom startup configs are located in the `init-configs` directory and assigned to every node using `startup-config:` key in the `ambassadors_custom_cfg.clab.yml`. This allows creating pre-configured labs. In this case pre-configured MLAG between leaf switches and basic BGP underlay configuration. Host should be able to ping loopbacks of all leaf and spine switches. Connect to the host to confirm that:
+- Custom startup configs are located in the `init-configs` directory and assigned to every node using `startup-config:` key in the `custom_cfg.clab.yml`. This allows creating pre-configured labs. In this case pre-configured MLAG between leaf switches and basic BGP underlay configuration. Host should be able to ping loopbacks of all leaf and spine switches. Connect to the host and run following commands to confirm that:
 
-```bash
-clab@ubuntu:~/emea-ambassadors-containerlab-aug-2022$ ssh admin@clab-ambassadors_clab-a_host
-Password:
-a_host>en
-a_host#bash for i in {1..4}; do ping -c 4 10.${i}.${i}.${i}; done
-```
+  ```console
+  $ ssh admin@clab-ceos-lab-a_host
+  Password:
+  a_host>en
+  a_host#bash for i in {1..4}; do ping -c 4 10.${i}.${i}.${i}; done
+  ```
 
-Feel free to do some additional checks on leaf1 for example:
+---
+
+# Additional Checks
+
+<style scoped>section {font-size: 22px;}</style>
+
+Run following commands on leaf1:
 
 - `show ip bgp summary`
 - `show mlag`
