@@ -256,9 +256,9 @@ $ cd building-containerlab-with-ceos
 
 ---
 
-# Inspect the Lab - 1
+# Inspect the Lab
 
-<style scoped>section {font-size: 20px;}</style>
+<style scoped>section {font-size: 12px;}</style>
 
 Once the lab is ready, you'll see a table with the list of deployed containers, their host names and management IPs:
 
@@ -288,10 +288,6 @@ $ cat /etc/hosts | grep -i clab-
 192.168.123.21  clab-ceos-lab-leaf1
 ###### CLAB-ceos-lab-END ######
 ```
-
----
-
-# Inspect the Lab - 2
 
 You can also list containers using docker command:
 
