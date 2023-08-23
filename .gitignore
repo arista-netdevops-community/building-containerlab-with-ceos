@@ -107,4 +107,5 @@ clab-*
 *.bak
 
 # ingnore images and other files not to be uploaded to GitHub
-.gitignored/
+.gitignored/*
+!.gitignored/README.md

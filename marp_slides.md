@@ -136,3 +136,25 @@ docker run hello-world
 
 </div>
 </div>
+
+---
+
+# Download cEOS-lab Image
+
+<style scoped>section {font-size: 20px;}</style>
+
+1. Login to [Arista Software Download](https://www.arista.com/en/support/software-download) portal. You need to have an account to download the image.
+2. Select `EOS > Active Releases > 4.30 > EOS-4.30.2F > cEOS-lab`.
+3. Download `cEOS-lab-4.30.2F.tar.xz` image.
+4. Upload the image to your lab VM. For example, you can use SFTP to transfer the image:
+
+  ```bash
+  sftp ${REMOTE_USER}@${UBUNTU_VM_IP}:/home/${REMOTE_USER}/${IMAGE_DIR} <<< $'put cEOS-lab-4.30.2F.tar*'
+  # for example:
+  # sftp user@10.10.10.11:/home/user/images <<< $'put cEOS-lab-4.30.2F.tar*'
+  ```
+
+> NOTE: if you are using Vagrant, add the image to `.gitignored` directory. It will be automatically copied to the VM.
+> If Github Codespace is used and token is set, the image will be pulled from arista.com automatically.
+
+![bg right h:720](img/marp_slides/../ceos-lab-download.png)
