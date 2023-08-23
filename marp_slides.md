@@ -235,3 +235,21 @@ $ cd building-containerlab-with-ceos
   ```
 
 - Refer to the [Containerlab quick start documentation](https://containerlab.dev/quickstart/) for the details.
+
+---
+
+# Deploy The Lab
+
+<style scoped>section {font-size: 20px;}</style>
+
+![bg right fit](img/lab_setup.png)
+
+- Inspect `ambassadors_default_cfg.clab.yml` and deploy the lab:
+
+  ```bash
+  sudo containerlab deploy --debug --topo default_cfg.clab.yml
+  ```
+
+- This command will deploy Containerlab with the default EOS configuration provided by Containerlab. The `--debug` flag is optional, but provides additional information while Containerlab is starting.
+
+  > NOTE: If there is a single `.clab.yml` file in the current directory, it is possible to use `sudo containerlab deploy` command without specifying the topology file. As we have multiple files in the directory, we must specify the topology explicitly.
