@@ -158,3 +158,27 @@ docker run hello-world
 > If Github Codespace is used and token is set, the image will be pulled from arista.com automatically.
 
 ![bg right h:720](img/marp_slides/../ceos-lab-download.png)
+
+---
+
+# Import cEOS-lab Image
+
+<style scoped>section {font-size: 22px;}</style>
+
+1. Go to the directory with the uploaded image and import the image:
+
+    ```bash
+    docker import cEOS-lab-4.30.2F.tar.xz ceos-lab:4.30.2F
+    ```
+
+    > NOTE: you can also import the image with the tag latest to allow quick "upgrade" of those lab where specific version is not required: `docker tag ceos-lab:4.30.2F ceos-lab:latest`
+
+2. Confirm that the image was imported successfully:
+
+    ```bash
+    clab@ubuntu:~$ docker image ls
+    REPOSITORY    TAG         IMAGE ID       CREATED         SIZE
+    ceos-lab      4.30.2F     646c604b2596   9 hours ago     1.9GB
+    ceos-lab      latest      646c604b2596   9 hours ago     1.9GB
+    hello-world   latest      feb5d9fea6a5   10 months ago   13.3kB
+    ```

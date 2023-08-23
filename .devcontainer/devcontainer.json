@@ -14,7 +14,8 @@
         }
     },
     // "onCreateCommand": "sudo apt-get update; sudo apt-get install -y chromium",
-    "onCreateCommand": "docker import /home/vscode/tmp/ceos-lab-temp ceos-lab:latest; rm -rf /home/vscode/tmp/; npm i -g carbon-now-cli",
+    // "onCreateCommand": "docker import /home/vscode/tmp/ceos-lab-temp ceos-lab:latest; rm -rf /home/vscode/tmp/; npm i -g carbon-now-cli",
+    "onCreateCommand": "docker import /home/vscode/tmp/ceos-lab-temp ceos-lab:latest; rm -rf /home/vscode/tmp/",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2.3.1": {
             "version": "latest"
@@ -22,8 +23,8 @@
         // add sshd to support gh cli codespace cp
         "ghcr.io/devcontainers/features/sshd:1": {
             "version": "latest"
-        },
-        "ghcr.io/devcontainers/features/node:1": {}
+        }
+        // "ghcr.io/devcontainers/features/node:1": {}
     },
     // set minimum host requirements for cLab
     "hostRequirements": {
