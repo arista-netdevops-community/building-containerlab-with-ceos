@@ -1,5 +1,5 @@
 ---
-name: ambassadors_clab
+name: ceos-lab
 
 mgmt:
   network: clab_custom_mgmt
