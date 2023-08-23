@@ -325,3 +325,246 @@ Execute few command to confirm that cEOS-lab is functioning:
 - `show version`
 - `show lldp neighbors`
 - `show running-config`
+
+---
+
+# Destroy the Lab
+
+<style scoped>section {font-size: 22px;}</style>
+
+- Destroy the lab with `sudo containerlab destroy -t default_cfg.clab.yml`  
+- This will stop all containers, but will keep the files created by clab for the next run. For example, startup-configs.  
+- Check the flash content for leaf1 and inspect it's startup config:
+
+  ```console
+  $ ls clab-ceos-lab/leaf1/flash/
+  AsuFastPktTransmit.log  SsuRestore.log        aboot  fastpkttx.backup  kickstart-config  schedule        system_mac_address
+  Fossil                  SsuRestoreLegacy.log  debug  if-wait.sh        persist           startup-config
+  $ cat clab-ceos-lab/leaf1/flash/startup-config
+  ```
+
+- To remove these files and have a clean environment on the next run, use `--cleanup` flag:
+
+  ```bash
+  sudo containerlab destroy -t default_cfg.clab.yml --cleanup
+  ```
+
+---
+
+# Deploy the Lab with Custom Startup Config
+
+<style scoped>section {font-size: 22px;}</style>
+
+Deploy the lab with the custom configuration:
+
+```bash
+sudo containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
+```
+
+> NOTE: `--reconfigure` is required if `--cleanup` flag was not specified in the previous step. Otherwise custom startup configs will be ignored and configs in `clab-ambassadors_clab/` will be used instead.
+
+Custom startup configs are located in the `init-configs` directory and assigned to every node using `startup-config:` key in the `ambassadors_custom_cfg.clab.yml`. This allows creating pre-configured labs. In this case pre-configured MLAG between leaf switches and basic BGP underlay configuration. Host should be able to ping loopbacks of all leaf and spine switches. Connect to the host to confirm that:
+
+```bash
+clab@ubuntu:~/emea-ambassadors-containerlab-aug-2022$ ssh admin@clab-ambassadors_clab-a_host
+Password:
+a_host>en
+a_host#bash for i in {1..4}; do ping -c 4 10.${i}.${i}.${i}; done
+```
+
+Feel free to do some additional checks on leaf1 for example:
+
+- `show ip bgp summary`
+- `show mlag`
+- `show port-channel dense`
+
+> NOTE: `ambassadors_custom_cfg.clab.yml` has custom interface mapping defined in `interface_mapping.json` and assigned to cEOS-lab containers as bind mount. This helps to change default Management0 interface to Management1 as on physical switches.
+
+---
+
+# Make Packet Capture
+
+<style scoped>section {font-size: 22px;}</style>
+
+Every container has it's own namespace. To list all interfaces for leaf1, execute following command on the lab VM:
+
+```bash
+sudo ip netns exec clab-ambassadors_clab-leaf1 ip link
+```
+
+Run following command and wait a few minutes to capture a BGP packets:
+
+```bash
+sudo ip netns exec clab-ambassadors_clab-leaf1 tcpdump -nni eth1_1 port 179 -vvv
+```
+
+For additional details about packet capture check [cLab documentation](https://containerlab.dev/manual/wireshark/).
+
+---
+
+# Containerlab in a Container
+
+<style scoped>section {font-size: 22px;}</style>
+
+Destroy the lab with cleanup flag: `sudo containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup`
+
+It is possible to run the containerlab on the host without installing it. For that a Docker container with cLab can be executed on a Docker host.  
+This can be helpful to run Containerlab on an Intel-based Mac Book or in some special cases.
+
+Test that by running following command:
+
+```bash
+docker run --rm -it --privileged \
+  --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /etc/hosts:/etc/hosts \
+  --pid="host" \
+  -w $(pwd) \
+  -v $(pwd):$(pwd) \
+  ghcr.io/srl-labs/clab bash
+```
+
+This will start the container with cLab interactively. Once inside the container prompt, execute the following command to start the lab:
+
+```bash
+containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
+```
+
+Check the lab and destroy it: `containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup`  
+Exit the container.
+
+The default `ghcr.io/srl-labs/clab` container is making all changes as root. That can cause permissions issues if you are working with your repository from the container prompt. It is better to use `ghcr.io/srl-labs/clab` as non-interactive or craft your own container to map the user ID correctly.
+
+To use the container in non-interactive way execute following command:
+
+```bash
+docker run --rm --privileged \
+  --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /etc/hosts:/etc/hosts \
+  --pid="host" \
+  -w $(pwd) \
+  -v $(pwd):$(pwd) \
+  ghcr.io/srl-labs/clab containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
+```
+
+To destroy the lab:
+
+```bash
+docker run --rm --privileged \
+  --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /etc/hosts:/etc/hosts \
+  --pid="host" \
+  -w $(pwd) \
+  -v $(pwd):$(pwd) \
+  ghcr.io/srl-labs/clab containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup
+```
+
+---
+
+# Building a Custom Container with cLab
+
+<style scoped>section {font-size: 22px;}</style>
+
+It is possible to build a custom container with Containerlab installed. We are not going to discuss in detail how to build Docker containers, but required `Dockerfile`, `entrypoint.sh` and `gitconfig` are already present in this repository. There is also `updateUID.Dockerfile` that allows to change user id inside the container to match UID of the VM user. That is not required for our lab, but can a critical requirement in certain cases. For example, CentOS is very strict regarding user IDs.
+
+The custom container has following features:
+
+- ZSH and a nice prompt with a whale. =)
+- Number of Linux tools pre-installed.
+- Docker (in Docker) and Containerlab installed
+- Aliases to start and stop the lab and connect to the lab switches
+- Entrypoint
+- UID and GID inside the container matching UID and GID outside the container
+- Ansible included
+
+Let's build our own container now:
+
+```bash
+# build a temp container with UID 1000
+docker build --rm --pull --no-cache -f Dockerfile -t ambassadors_temp_image .
+# build final container with matching UID
+docker build -f updateUID.Dockerfile -t ambassadors_clab:latest --build-arg BASE_IMAGE=ambassadors_temp_image --build-arg REMOTE_USER=clab --build-arg NEW_UID=$(id -u) --build-arg NEW_GID=$(id -g) --build-arg IMAGE_USER=clab .
+```
+
+Start the container:
+
+```bash
+docker run --rm -it --privileged \
+  --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /etc/hosts:/etc/hosts \
+  --pid="host" \
+  -w $(pwd) \
+  -v $(pwd):$(pwd) \
+  ambassadors_clab:latest
+```
+
+Test container features:
+
+- start the lab: `lab_start`
+- connect to leaf1: `leaf1`
+- stop the lab: `lab_stop`
+
+Custom container can be very useful if you have special requirements or want to create an environment with all dependencies pre-installed and minimum actions required from the user to start the lab. Example: [avd-quickstart-containerlab](https://github.com/arista-netdevops-community/avd-quickstart-containerlab)
+
+---
+
+# Ansible with Containerlab
+
+<style scoped>section {font-size: 22px;}</style>
+
+When containerlab starts it automatically creates Ansible inventory that can be used to automate certain tasks in the lab.  
+Start `ambassadors_clab:latest` container we have created earlier and deploy the lab.  
+Inspect the Ansible inventory: `cat clab-ambassadors_clab/ansible-inventory.yml`  
+Ansible is already installed inside the container and ansible.cfg is provided in the repository as well as the playbook `check_the_lab.yml`.
+Run the playbook by executing command `ansible-playbook playbooks/check_the_lab.yml`  
+This playbook will execute number of show commands on all switches in the lab and present output on the screen.
+
+---
+
+# Possible Scale Caveats
+
+<style scoped>section {font-size: 22px;}</style>
+
+> WARNING: If you are planning to deploy a high scale lab, test it on a non-production host that you can access and recover any time. Incorrectly deployed Containerlab at scale can bring your host down due to high CPU utilization on start.
+
+Generally, Ubuntu systems have quite low `fs.inotify.max_user_instances` limit by default. Even if it was increased, older cEOS-lab containers can decrease system limit to 1256. That is not sufficient for a high scale lab. The lab may fail to start and even bring your host down due to high CPU.
+
+In reality increasing inotify limit on a modern host with high RAM will not create any disadvantages. If you are planning to deploy older cEOS-lab container, you can increase it manually.
+
+1st, define your inotify limit. You can safely assume that it will not be more than 1256*number of containers. But the required limit is expected to be significantly below that. Newer cEOS-lab images set the limit to 62800, that is a good number for most cLab deployments.
+
+Set your system limit: `sudo sysctl -w fs.inotify.max_user_instances=62800`
+
+Create 99-zceos.conf: `sudo sh -c 'echo "fs.inotify.max_user_instances = 62800" > /etc/sysctl.d/99-zceos.conf'`
+
+Check the limit: `sudo sysctl -a  | grep -i inotify`
+
+Mount the custom 99-zceos.conf to your cEOS-lab containers in the topology file:
+
+```yaml
+topology:
+  kinds:
+    ceos:
+      binds:
+        - /etc/sysctl.d/99-zceos.conf:/etc/sysctl.d/99-zceos.conf:ro
+```
+
+Add `--max-workers` and `--timeout` flags to your containerlab deploy command.
+
+> NOTE: as of 4.28 default cEOS-lab 99-zceos.conf was updated and configures fs.inotify.max_user_instances to 62800. It is recommended to use cEOS-lab 4.28 or higher and Ubuntu 20LTS or higher. Nevertheless, always test your lab environment first, check inotify limits and set `--max-workers` and `--timeout` flags for a high scale deployment.  
+> GOOD TO KNOW: inotify is also the main reason why cEOS-lab will not work on M1 Mac.
+
+---
+
+# References
+
+<style scoped>section {font-size: 22px;}</style>
+
+- [avd-quickstart-containerlab](https://github.com/arista-netdevops-community/avd-quickstart-containerlab)
+- [avd-all-in-one-container](https://github.com/arista-netdevops-community/avd-all-in-one-container)
+- [avd-cEOS-Lab](https://github.com/arista-netdevops-community/avd-cEOS-Lab)
+- [kvm-lab-for-network-engineers](https://github.com/arista-netdevops-community/kvm-lab-for-network-engineers)
+- [Containerlab documentation](https://containerlab.dev)
