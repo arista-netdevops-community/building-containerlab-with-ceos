@@ -111,36 +111,6 @@ All photos are taken from [Pexels](https://www.pexels.com/) and [Unsplash](https
 
 <style scoped>section {font-size: 22px;}</style>
 
-> Check if Docker is already installed. In this case you can skip the steps below.
-
-1. Install Docker on the host. The detailed instructions are available [here](https://docs.docker.com/engine/install/ubuntu/). You can used one-liner script for that.
-2. Add your user to the `docker` group.
-3. Logout and login again to apply the changes.
-4. Check the Docker version and run `hello-world` container to test functionality.
-
-![bg right w:640](img/carbon-setup-docker.sh.png)
-
-<!-- Add footer starting from this slide -->
-<!--
-footer: 'cEOS/cLab Workshop 2023. [Copy-paste Code Snippet here](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/carbon-snippets/carbon-setup-docker.sh)'
--->
-
-<!--
-# install Docker
-sudo curl -fsSL https://get.docker.com | sh
-# add user to the docker group
-sudo usermod -aG docker ${USER}
-# test docker
-docker --version
-docker run hello-world
--->
-
----
-
-# Alt
-
-<style scoped>section {font-size: 22px;}</style>
-
 <div class="columns">
 <div>
 
