@@ -1,0 +1,53 @@
+---
+name: ambassadors_clab
+
+mgmt:
+  network: clab_custom_mgmt
+  ipv4_subnet: 192.168.123.0/24
+
+topology:
+  kinds:
+    ceos:
+      image: ceos-lab:latest
+  defaults:
+    kind: ceos
+  
+  nodes:
+    spine1:
+      mgmt_ipv4: 192.168.123.11
+      startup-config: init-configs/spine1.cfg
+      binds:
+      # change Ma0 to Ma1
+      - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+    spine2:
+      mgmt_ipv4: 192.168.123.12
+      startup-config: init-configs/spine2.cfg
+      binds:
+      # change Ma0 to Ma1
+      - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+    leaf1:
+      mgmt_ipv4: 192.168.123.21
+      startup-config: init-configs/leaf1.cfg
+      binds:
+      # change Ma0 to Ma1
+      - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+    leaf2:
+      mgmt_ipv4: 192.168.123.22
+      startup-config: init-configs/leaf2.cfg
+      binds:
+      # change Ma0 to Ma1
+      - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+    a_host:
+      # default interface names will be used for the host
+      mgmt_ipv4: 192.168.123.100
+      startup-config: init-configs/a_host.cfg
+
+  links:
+    - endpoints: ["spine1:eth1_1", "leaf1:eth1_1"]
+    - endpoints: ["spine1:eth2_1", "leaf2:eth1_1"]
+    - endpoints: ["spine2:eth1_1", "leaf1:eth2_1"]
+    - endpoints: ["spine2:eth2_1", "leaf2:eth2_1"]
+    - endpoints: ["leaf1:eth3_1", "leaf2:eth3_1"]
+    - endpoints: ["leaf1:eth4_1", "leaf2:eth4_1"]
+    - endpoints: ["leaf1:eth10_1", "a_host:eth1"]
+    - endpoints: ["leaf2:eth10_1", "a_host:eth2"]
