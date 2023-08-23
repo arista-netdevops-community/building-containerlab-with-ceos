@@ -244,7 +244,7 @@ $ cd building-containerlab-with-ceos
 
 ![bg right fit](img/lab_setup.png)
 
-- Inspect `ambassadors_default_cfg.clab.yml` and deploy the lab:
+- Inspect `default_cfg.clab.yml` and deploy the lab:
 
   ```bash
   sudo containerlab deploy --debug --topo default_cfg.clab.yml
@@ -253,3 +253,54 @@ $ cd building-containerlab-with-ceos
 - This command will deploy Containerlab with the default EOS configuration provided by Containerlab. The `--debug` flag is optional, but provides additional information while Containerlab is starting.
 
   > NOTE: If there is a single `.clab.yml` file in the current directory, it is possible to use `sudo containerlab deploy` command without specifying the topology file. As we have multiple files in the directory, we must specify the topology explicitly.
+
+---
+
+# Inspect the Lab - 1
+
+<style scoped>section {font-size: 20px;}</style>
+
+Once the lab is ready, you'll see a table with the list of deployed containers, their host names and management IPs:
+
+```text
++---+------------------------------+--------------+-----------------+------+---------+--------------------+--------------+
+| # |             Name             | Container ID |      Image      | Kind |  State  |    IPv4 Address    | IPv6 Address |
++---+------------------------------+--------------+-----------------+------+---------+--------------------+--------------+
+| 1 | clab-ambassadors_clab-a_host | 436eb12b6ebc | ceos-lab:latest | ceos | running | 192.168.123.100/24 | N/A          |
+| 2 | clab-ambassadors_clab-leaf1  | 780403a150a9 | ceos-lab:latest | ceos | running | 192.168.123.21/24  | N/A          |
+| 3 | clab-ambassadors_clab-leaf2  | 79dba4526c6b | ceos-lab:latest | ceos | running | 192.168.123.22/24  | N/A          |
+| 4 | clab-ambassadors_clab-spine1 | af3b97f141fa | ceos-lab:latest | ceos | running | 192.168.123.11/24  | N/A          |
+| 5 | clab-ambassadors_clab-spine2 | 1655913706d5 | ceos-lab:latest | ceos | running | 192.168.123.12/24  | N/A          |
++---+------------------------------+--------------+-----------------+------+---------+--------------------+--------------+
+```
+
+You can call the table again any time with `sudo clab inspect -t ambassadors_default_cfg.clab.yml`.
+
+Containerlab creates corresponding entries in the `/etc/hosts` file as well:
+
+```bash
+clab@ubuntu:~/emea-ambassadors-containerlab-aug-2022$ cat /etc/hosts | grep clab-
+###### CLAB-ambassadors_clab-START ######
+192.168.123.12  clab-ambassadors_clab-spine2
+192.168.123.22  clab-ambassadors_clab-leaf2
+192.168.123.11  clab-ambassadors_clab-spine1
+192.168.123.21  clab-ambassadors_clab-leaf1
+192.168.123.100 clab-ambassadors_clab-a_host
+###### CLAB-ambassadors_clab-END ######
+```
+
+---
+
+# Inspect the Lab - 2
+
+You can also list containers using docker command:
+
+```bash
+clab@ubuntu:~$ docker container ls
+CONTAINER ID   IMAGE             COMMAND                  CREATED             STATUS             PORTS     NAMES
+edbc03859477   ceos-lab:latest   "bash -c '/mnt/flash…"   About an hour ago   Up About an hour             clab-ambassadors_clab-spine2
+c4cd010b2318   ceos-lab:latest   "bash -c '/mnt/flash…"   About an hour ago   Up About an hour             clab-ambassadors_clab-leaf2
+29250cd4881e   ceos-lab:latest   "bash -c '/mnt/flash…"   About an hour ago   Up About an hour             clab-ambassadors_clab-spine1
+32c576fcf575   ceos-lab:latest   "bash -c '/mnt/flash…"   About an hour ago   Up About an hour             clab-ambassadors_clab-leaf1
+4d25882a1a08   ceos-lab:latest   "bash -c '/mnt/flash…"   About an hour ago   Up About an hour             clab-ambassadors_clab-a_host
+```
