@@ -462,34 +462,33 @@ tcpdump: listening on eth1_1, link-type EN10MB (Ethernet), snapshot length 26214
 
 # Containerlab in a Container
 
-<style scoped>section {font-size: 22px;}</style>
+<style scoped>section {font-size: 19px;}</style>
 
-Destroy the lab with cleanup flag: `sudo containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup`
+- Destroy the lab with cleanup flag: `sudo containerlab destroy -t custom_cfg.clab.yml --cleanup`
+- It is possible to run the containerlab on the host without installing it by simply running it in a container. This is helpful on MacBooks and advanced use cases (like this workshop).
+- Start Containerlab by using this command:
 
-It is possible to run the containerlab on the host without installing it. For that a Docker container with cLab can be executed on a Docker host.  
-This can be helpful to run Containerlab on an Intel-based Mac Book or in some special cases.
+  ```bash
+  docker run --rm -it --privileged \
+    --network host \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /etc/hosts:/etc/hosts \
+    --pid="host" \
+    -w $(pwd) \
+    -v $(pwd):$(pwd) \
+    ghcr.io/srl-labs/clab bash
+  ```
 
-Test that by running following command:
+- This will start the container in the interactive mode. Once in the container prompt, execute following command to start the lab:
 
-```bash
-docker run --rm -it --privileged \
-  --network host \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /etc/hosts:/etc/hosts \
-  --pid="host" \
-  -w $(pwd) \
-  -v $(pwd):$(pwd) \
-  ghcr.io/srl-labs/clab bash
-```
+  ```bash
+  containerlab deploy -t custom_cfg.clab.yml --reconfigure
+  ```
 
-This will start the container with cLab interactively. Once inside the container prompt, execute the following command to start the lab:
+- Destroy the lab with `containerlab destroy -t custom_cfg.clab.yml --cleanup` when ready and exit the container.
 
-```bash
-containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
-```
+---
 
-Check the lab and destroy it: `containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup`  
-Exit the container.
 
 The default `ghcr.io/srl-labs/clab` container is making all changes as root. That can cause permissions issues if you are working with your repository from the container prompt. It is better to use `ghcr.io/srl-labs/clab` as non-interactive or craft your own container to map the user ID correctly.
 
