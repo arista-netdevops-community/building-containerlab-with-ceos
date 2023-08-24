@@ -465,7 +465,7 @@ tcpdump: listening on eth1_1, link-type EN10MB (Ethernet), snapshot length 26214
 <style scoped>section {font-size: 19px;}</style>
 
 - Destroy the lab with cleanup flag: `sudo containerlab destroy -t custom_cfg.clab.yml --cleanup`
-- It is possible to run the containerlab on the host without installing it by simply running it in a container. This is helpful on MacBooks and advanced use cases (like this workshop).
+- It is possible to run the containerlab on the host without installing it by simply running it in a container. This is helpful on MacBooks (the only way to run cLab) and advanced use cases (like this workshop).
 - Start Containerlab by using this command:
 
   ```bash
@@ -489,82 +489,60 @@ tcpdump: listening on eth1_1, link-type EN10MB (Ethernet), snapshot length 26214
 
 ---
 
-
-The default `ghcr.io/srl-labs/clab` container is making all changes as root. That can cause permissions issues if you are working with your repository from the container prompt. It is better to use `ghcr.io/srl-labs/clab` as non-interactive or craft your own container to map the user ID correctly.
-
-To use the container in non-interactive way execute following command:
-
-```bash
-docker run --rm --privileged \
-  --network host \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /etc/hosts:/etc/hosts \
-  --pid="host" \
-  -w $(pwd) \
-  -v $(pwd):$(pwd) \
-  ghcr.io/srl-labs/clab containerlab deploy -t ambassadors_custom_cfg.clab.yml --reconfigure
-```
-
-To destroy the lab:
-
-```bash
-docker run --rm --privileged \
-  --network host \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /etc/hosts:/etc/hosts \
-  --pid="host" \
-  -w $(pwd) \
-  -v $(pwd):$(pwd) \
-  ghcr.io/srl-labs/clab containerlab destroy -t ambassadors_custom_cfg.clab.yml --cleanup
-```
-
----
-
-# Building a Custom Container with cLab
+# Containerlab in a Container (Non-Interactive)
 
 <style scoped>section {font-size: 22px;}</style>
 
-It is possible to build a custom container with Containerlab installed. We are not going to discuss in detail how to build Docker containers, but required `Dockerfile`, `entrypoint.sh` and `gitconfig` are already present in this repository. There is also `updateUID.Dockerfile` that allows to change user id inside the container to match UID of the VM user. That is not required for our lab, but can a critical requirement in certain cases. For example, CentOS is very strict regarding user IDs.
+<div class="columns">
+<div>
 
-The custom container has following features:
+- Running cLab container in non-interactive mode is helpful to create shortcuts, etc.
+- You can test it now or skip this step.
+- Check [the documentation](https://containerlab.dev/install/#container) for additional details.
 
-- ZSH and a nice prompt with a whale. =)
-- Number of Linux tools pre-installed.
-- Docker (in Docker) and Containerlab installed
-- Aliases to start and stop the lab and connect to the lab switches
-- Entrypoint
-- UID and GID inside the container matching UID and GID outside the container
-- Ansible included
-
-Let's build our own container now:
+</div>
+<div>
 
 ```bash
-# build a temp container with UID 1000
-docker build --rm --pull --no-cache -f Dockerfile -t ambassadors_temp_image .
-# build final container with matching UID
-docker build -f updateUID.Dockerfile -t ambassadors_clab:latest --build-arg BASE_IMAGE=ambassadors_temp_image --build-arg REMOTE_USER=clab --build-arg NEW_UID=$(id -u) --build-arg NEW_GID=$(id -g) --build-arg IMAGE_USER=clab .
-```
-
-Start the container:
-
-```bash
-docker run --rm -it --privileged \
+# deploy the lab
+docker run --rm --privileged \
   --network host \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /etc/hosts:/etc/hosts \
   --pid="host" \
   -w $(pwd) \
   -v $(pwd):$(pwd) \
-  ambassadors_clab:latest
+  ghcr.io/srl-labs/clab containerlab deploy -t custom_cfg.clab.yml --reconfigure
+
+
+
+# destroy the lab
+docker run --rm --privileged \
+  --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /etc/hosts:/etc/hosts \
+  --pid="host" \
+  -w $(pwd) \
+  -v $(pwd):$(pwd) \
+  ghcr.io/srl-labs/clab containerlab destroy -t custom_cfg.clab.yml --cleanup
 ```
 
-Test container features:
+</div>
+</div>
 
-- start the lab: `lab_start`
-- connect to leaf1: `leaf1`
-- stop the lab: `lab_stop`
+---
 
-Custom container can be very useful if you have special requirements or want to create an environment with all dependencies pre-installed and minimum actions required from the user to start the lab. Example: [avd-quickstart-containerlab](https://github.com/arista-netdevops-community/avd-quickstart-containerlab)
+# Crafting Your Own Container
+
+<style scoped>section {font-size: 22px;}</style>
+
+- It is easy to craft your own container with Containerlab installed.
+- Check the following [Dockerfile](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/.devcontainer/Dockerfile) for the details.
+- Possible reasons to create your own container:
+  
+  - Produce a consistent environment that is easy to share.
+  - Pre-install additional tools. (Ansible, docker-in-docker, etc.)
+  - Add aliases, etc.
 
 ---
 
@@ -572,56 +550,72 @@ Custom container can be very useful if you have special requirements or want to 
 
 <style scoped>section {font-size: 22px;}</style>
 
-When containerlab starts it automatically creates Ansible inventory that can be used to automate certain tasks in the lab.  
-Start `ambassadors_clab:latest` container we have created earlier and deploy the lab.  
-Inspect the Ansible inventory: `cat clab-ambassadors_clab/ansible-inventory.yml`  
-Ansible is already installed inside the container and ansible.cfg is provided in the repository as well as the playbook `check_the_lab.yml`.
-Run the playbook by executing command `ansible-playbook playbooks/check_the_lab.yml`  
-This playbook will execute number of show commands on all switches in the lab and present output on the screen.
+- When containerlab starts it automatically creates Ansible inventory that can be used to automate certain tasks in the lab.
+- Start the lab and inspect the inventory file: `cat clab-ceos-lab/ansible-inventory.yml`
+- Check if ansible is already installed: `ansible --version`
+- Install Ansible if it's not present. Use [Dockerfile](https://github.com/arista-netdevops-community/building-containerlab-with-ceos/blob/main/.devcontainer/Dockerfile) as a reference:
+
+  ```bash
+  pip3 install "ansible-core>=2.13.1,<2.14.0"
+  ansible-galaxy collection install ansible.netcommon
+  ansible-galaxy collection install arista.eos
+  # install community.general to support callback plugins in ansible.cfg, etc.
+  ansible-galaxy collection install community.general
+  ```
+
+- Inspect `ansible.cfg` and make sure that it is matching your environment.
+- Run the playbook: `ansible-playbook playbooks/check_the_lab.yml`
+- The playbook will execute number of show commands on all switches in the lab and print output on the screen.
 
 ---
 
-# Possible Scale Caveats
+# Possible Caveats
 
-<style scoped>section {font-size: 22px;}</style>
+<style scoped>section {font-size: 18px;}</style>
+
+![bg right](img/pexels-danne-555709.jpg)
 
 > WARNING: If you are planning to deploy a high scale lab, test it on a non-production host that you can access and recover any time. Incorrectly deployed Containerlab at scale can bring your host down due to high CPU utilization on start.
 
-Generally, Ubuntu systems have quite low `fs.inotify.max_user_instances` limit by default. Even if it was increased, older cEOS-lab containers can decrease system limit to 1256. That is not sufficient for a high scale lab. The lab may fail to start and even bring your host down due to high CPU.
+- It's always good to add `--max-workers` and `--timeout` flags to your containerlab deploy command.
+- Use recent cEOS-lab version. 4.29 or higher is strongly recommended!
+- cLab is creating a lot as root. That can cause permission issues. For example, make sure that all cLab files are gitignored:
 
-In reality increasing inotify limit on a modern host with high RAM will not create any disadvantages. If you are planning to deploy older cEOS-lab container, you can increase it manually.
-
-1st, define your inotify limit. You can safely assume that it will not be more than 1256*number of containers. But the required limit is expected to be significantly below that. Newer cEOS-lab images set the limit to 62800, that is a good number for most cLab deployments.
-
-Set your system limit: `sudo sysctl -w fs.inotify.max_user_instances=62800`
-
-Create 99-zceos.conf: `sudo sh -c 'echo "fs.inotify.max_user_instances = 62800" > /etc/sysctl.d/99-zceos.conf'`
-
-Check the limit: `sudo sysctl -a  | grep -i inotify`
-
-Mount the custom 99-zceos.conf to your cEOS-lab containers in the topology file:
-
-```yaml
-topology:
-  kinds:
-    ceos:
-      binds:
-        - /etc/sysctl.d/99-zceos.conf:/etc/sysctl.d/99-zceos.conf:ro
-```
-
-Add `--max-workers` and `--timeout` flags to your containerlab deploy command.
-
-> NOTE: as of 4.28 default cEOS-lab 99-zceos.conf was updated and configures fs.inotify.max_user_instances to 62800. It is recommended to use cEOS-lab 4.28 or higher and Ubuntu 20LTS or higher. Nevertheless, always test your lab environment first, check inotify limits and set `--max-workers` and `--timeout` flags for a high scale deployment.  
-> GOOD TO KNOW: inotify is also the main reason why cEOS-lab will not work on M1 Mac.
+  ```bash
+  # ignore clab files
+  clab-*
+  *.bak
+  ```
 
 ---
 
-# References
+# Additional Scale Caveats
 
-<style scoped>section {font-size: 22px;}</style>
+<style scoped>section {font-size: 18px;}</style>
 
-- [avd-quickstart-containerlab](https://github.com/arista-netdevops-community/avd-quickstart-containerlab)
-- [avd-all-in-one-container](https://github.com/arista-netdevops-community/avd-all-in-one-container)
-- [avd-cEOS-Lab](https://github.com/arista-netdevops-community/avd-cEOS-Lab)
-- [kvm-lab-for-network-engineers](https://github.com/arista-netdevops-community/kvm-lab-for-network-engineers)
-- [Containerlab documentation](https://containerlab.dev)
+- In the past Ubuntu used to have low `fs.inotify.max_user_instances` limit. On top, older cEOS-lab versions were decreasing this system limit to 1256. This was causing issues with high scale labs.
+- On a modern system and any cEOS-lab later than 4.28 this system is high enough. 62800 is the default. Increasing this limit on a modern host with high memory is not causing any issues. Feel free to play with this parameter if required:
+
+  ```bash
+  # set system limit
+  sudo sysctl -w fs.inotify.max_user_instances=62800
+  # create 99-zceos.conf
+  sudo sh -c 'echo "fs.inotify.max_user_instances = 62800" > /etc/sysctl.d/99-zceos.conf'
+  # check the limit
+  sudo sysctl -a  | grep -i inotify
+  ```
+
+  ```yaml
+  topology:
+  kinds:
+    ceos:
+      # mount custom 99-zceos.conf to cEOS-lab containers
+      binds:
+        - /etc/sysctl.d/99-zceos.conf:/etc/sysctl.d/99-zceos.conf:ro
+  ```
+
+- Generally you don't have to touch that. But be aware and check in case of issues.
+
+---
+
+# Q&A

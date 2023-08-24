@@ -28,10 +28,13 @@ RUN wget https://github.com/mikefarah/yq/releases/download/${_YQ_VERSION}/${_YQ_
 # switch user to vscode otherwise Ansible will be installed as root
 USER vscode
 ENV PATH=$PATH:/home/vscode/.local/bin
-# # install Ansible AVD collection
-# RUN pip3 install "ansible-core>=2.13.1,<2.14.0" \
-#     && ansible-galaxy collection install arista.avd:==${_AVD_VERSION} \
-#     && pip3 install -r /home/vscode/.ansible/collections/ansible_collections/arista/avd/requirements.txt
+# install Ansible
+ENV ANSIBLE_CONFIG="/workspaces/building-containerlab-with-ceos/ansible.cfg"
+RUN pip3 install "ansible-core>=2.13.1,<2.14.0" \
+    && ansible-galaxy collection install ansible.netcommon \
+    && ansible-galaxy collection install arista.eos \
+    # install community.general to support callback plugins in ansible.cfg, etc.
+    && ansible-galaxy collection install community.general
 
 # install the latest containerlab and yamllint
 RUN bash -c "$(curl -sL https://get.containerlab.dev)" -- -v ${_CLAB_VERSION} \
