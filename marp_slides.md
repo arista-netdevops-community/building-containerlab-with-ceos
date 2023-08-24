@@ -428,19 +428,35 @@ Neighbor Status Codes: m - Under maintenance
 
 <style scoped>section {font-size: 22px;}</style>
 
-Every container has it's own namespace. To list all interfaces for leaf1, execute following command on the lab VM:
+- Every container has it's own Linux namespace. To list all interfaces for leaf1, execute following command:
 
-```bash
-sudo ip netns exec clab-ambassadors_clab-leaf1 ip link
+  ```bash
+  sudo ip netns exec clab-ceos-lab-leaf1 ip link
+  ```
+
+- Run following command and wait a few minutes to capture a BGP packets:
+
+  ```bash
+  sudo ip netns exec clab-ceos-lab-leaf1 tcpdump -nni eth1_1 port 179 -vvv
+  ```
+
+- For additional details about packet capture check [cLab documentation](https://containerlab.dev/manual/wireshark/).
+
+```console
+$ sudo ip netns exec clab-ceos-lab-leaf1 tcpdump -nni eth1_1 port 179 -vvv
+tcpdump: listening on eth1_1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+^C07:49:45.039605 IP (tos 0xc0, ttl 1, id 12506, offset 0, flags [DF], proto TCP (6), length 71)
+    10.0.0.0.44357 > 10.0.0.1.179: Flags [P.], cksum 0xdbc5 (correct), seq 1756697861:1756697880, ack 3369297165, win 501, options [nop,nop,TS val 4288989697 ecr 2402340456], length 19: BGP
+        Keepalive Message (4), length: 19
+07:49:45.039649 IP (tos 0xc0, ttl 1, id 11530, offset 0, flags [DF], proto TCP (6), length 52)
+    10.0.0.1.179 > 10.0.0.0.44357: Flags [.], cksum 0x6ac1 (correct), seq 1, ack 19, win 509, options [nop,nop,TS val 2402370431 ecr 4288989697], length 0
+07:50:10.925048 IP (tos 0xc0, ttl 1, id 11531, offset 0, flags [DF], proto TCP (6), length 71)
+    10.0.0.1.179 > 10.0.0.0.44357: Flags [P.], cksum 0x0175 (correct), seq 1:20, ack 19, win 509, options [nop,nop,TS val 2402396317 ecr 4288989697], length 19: BGP
+        Keepalive Message (4), length: 19
+07:50:10.925102 IP (tos 0xc0, ttl 1, id 12507, offset 0, flags [DF], proto TCP (6), length 52)
+    10.0.0.0.44357 > 10.0.0.1.179: Flags [.], cksum 0xa079 (correct), seq 19, ack 20, win 501, options [nop,nop,TS val 4289015583 ecr 2402396317], length 0
 ```
-
-Run following command and wait a few minutes to capture a BGP packets:
-
-```bash
-sudo ip netns exec clab-ambassadors_clab-leaf1 tcpdump -nni eth1_1 port 179 -vvv
-```
-
-For additional details about packet capture check [cLab documentation](https://containerlab.dev/manual/wireshark/).
 
 ---
 
