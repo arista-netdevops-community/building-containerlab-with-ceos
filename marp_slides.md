@@ -378,13 +378,49 @@ Execute few command to confirm that cEOS-lab is functioning:
 
 <style scoped>section {font-size: 22px;}</style>
 
-Run following commands on leaf1:
+<div class="columns">
+<div>
 
+Execute following commands on leaf1 to confirm that it is functioning as expected:
+
+- `show interfaces status`
 - `show ip bgp summary`
 - `show mlag`
 - `show port-channel dense`
 
 > NOTE: `ambassadors_custom_cfg.clab.yml` has custom interface mapping defined in `interface_mapping.json` and assigned to cEOS-lab containers as bind mount. This helps to change default Management0 interface to Management1 as on physical switches.
+
+</div>
+<div>
+
+```json
+{
+    "ManagementIntf": {
+        "eth0": "Management1"
+    },
+    "EthernetIntf": {
+        "eth1_1": "Ethernet1/1",
+        "eth2_1": "Ethernet2/1",
+        "eth3_1": "Ethernet3/1",
+        "eth4_1": "Ethernet4/1",
+        "eth10_1": "Ethernet10/1"
+    }
+}
+```
+
+```console
+leaf1#sh ip bgp summary 
+BGP summary information for VRF default
+Router identifier 10.3.3.3, local AS number 65001
+Neighbor Status Codes: m - Under maintenance
+  Description              Neighbor     V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+  spine1_Ethernet1/1       10.0.0.0     4 65000             35        35    0    0 00:23:49 Estab   3      3
+  spine2_Ethernet1/1       10.0.0.4     4 65000             34        37    0    0 00:23:49 Estab   3      3
+  leaf2                    10.255.251.1 4 65001             37        38    0    0 00:23:49 Estab   8      8
+```
+
+</div>
+</div>
 
 ---
 
